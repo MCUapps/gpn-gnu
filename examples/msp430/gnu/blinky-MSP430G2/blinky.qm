@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model version="2.3.2">
+ <framework name="qpn"/>
+ <package name="components" stereotype="0x00">
+  <class name="Blinky" superclass="qpn::QActive">
+   <statechart>
+    <initial target="../1">
+     <initial_glyph conn="4,4,5,0,6,4">
+      <action box="0,-2,6,2"/>
+     </initial_glyph>
+    </initial>
+    <state name="off">
+     <entry>QActive_arm((QActive *)me, BSP_TICKS_PER_SEC/2); /* 1/2 sec */
+BSP_ledOff();</entry>
+     <tran trig="Q_TIMEOUT" target="../../2">
+      <tran_glyph conn="31,12,1,3,11">
+       <action box="1,-2,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="4,8,27,12">
+      <entry box="1,2,25,8"/>
+     </state_glyph>
+    </state>
+    <state name="on">
+     <entry>QActive_arm((QActive *)me, BSP_TICKS_PER_SEC/2); /* 1/2 sec */
+BSP_ledOn();</entry>
+     <tran trig="Q_TIMEOUT" target="../../1">
+      <tran_glyph conn="42,16,3,1,-11">
+       <action box="-10,0,10,2"/>
+      </tran_glyph>
+     </tran>
+     <state_glyph node="42,8,28,12">
+      <entry box="1,2,25,8"/>
+     </state_glyph>
+    </state>
+    <state_diagram size="92,50"/>
+   </statechart>
+  </class>
+  <attribute name="AO_Blinky" type="QActive * const" visibility="0x00" properties="0x00"/>
+  <operation name="Blinky_ctor" type="void" visibility="0x00" properties="0x00">
+   <code>QActive_ctor(&amp;AO_Blinky.super, Q_STATE_CAST(&amp;Blinky_initial));</code>
+  </operation>
+ </package>
+ <directory name=".">
+  <file name="project.h">
+   <text>#ifndef project_h
+#define project_h
+
+void Blinky_ctor(void);
+
+$declare(components::Blinky_ctor)
+
+extern struct BlinkyTag AO_Blinky;
+
+#endif      /* project_h */</text>
+  </file>
+  <file name="blinky.c">
+   <text>#include &quot;qpn_port.h&quot;
+#include &quot;bsp.h&quot;
+#include &quot;project.h&quot;
+
+/*Q_DEFINE_THIS_FILE*/
+
+/* Blinky class declaration ------------------------------------------------*/
+$declare(components::Blinky)
+
+/* Global objects ----------------------------------------------------------*/
+Blinky AO_Blinky;        /* the single instance of the Blinky active object */
+
+/* Blinky class definition -------------------------------------------------*/
+$define(components::Blinky_ctor)
+$define(components::Blinky)</text>
+  </file>
+ </directory>
+</model>
